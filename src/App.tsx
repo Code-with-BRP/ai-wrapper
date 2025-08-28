@@ -3,6 +3,7 @@ import { useChat } from './hooks/useChat';
 import { ModelSelector } from './components/ModelSelector';
 import { ChatMessage } from './components/ChatMessage';
 import { ChatInput } from './components/ChatInput';
+import { UserAvatar } from './components/UserAvatar';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { MessageCircle, Trash2 } from "lucide-react";
@@ -52,6 +53,8 @@ function App() {
                   Clear Chat
                 </Button>
               )}
+
+              <UserAvatar />
             </div>
           </div>
         </CardContent>

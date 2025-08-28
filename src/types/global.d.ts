@@ -10,3 +10,11 @@ type LLMModel = {
   name: string;
   provider: string;
 };
+
+type ApiKeyStatus = "valid" | "invalid" | "checking" | "not-set";
+
+type ApiKeyData = {
+  key: string;
+  status: ApiKeyStatus;
+  lastValidated?: Date;
+};
