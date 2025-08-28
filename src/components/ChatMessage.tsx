@@ -1,3 +1,6 @@
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Card, CardContent } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 interface ChatMessageProps {
   message: Message;
@@ -7,29 +10,43 @@ export function ChatMessage({ message }: ChatMessageProps) {
   const isUser = message.role === 'user';
 
   return (
-    <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-4`}>
-      <div className={`flex items-start space-x-2 max-w-[80%] ${isUser ? 'flex-row-reverse space-x-reverse' : ''}`}>
-        <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-medium ${
-          isUser ? 'bg-blue-500' : 'bg-gray-500'
-        }`}>
-          {isUser ? 'U' : 'AI'}
-        </div>
+    <div className={cn("flex mb-4", isUser ? "justify-end" : "justify-start")}>
+      <div className={cn(
+        "flex items-start space-x-3 max-w-[80%]",
+        isUser ? "flex-row-reverse space-x-reverse" : ""
+      )}>
+        <Avatar className="w-8 h-8 flex-shrink-0">
+          <AvatarFallback className={cn(
+            "text-xs font-medium",
+            isUser 
+              ? "bg-primary text-primary-foreground" 
+              : "bg-secondary text-secondary-foreground"
+          )}>
+            {isUser ? 'U' : 'AI'}
+          </AvatarFallback>
+        </Avatar>
         
-        <div className={`rounded-lg px-4 py-2 ${
+        <Card className={cn(
+          "max-w-full",
           isUser 
-            ? 'bg-blue-500 text-white' 
-            : 'bg-gray-100 text-gray-900 border'
-        }`}>
-          <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
-          <p className={`text-xs mt-1 ${
-            isUser ? 'text-blue-100' : 'text-gray-500'
-          }`}>
-            {message.timestamp.toLocaleTimeString([], { 
-              hour: '2-digit', 
-              minute: '2-digit' 
-            })}
-          </p>
-        </div>
+            ? "bg-primary text-primary-foreground border-primary" 
+            : "bg-card"
+        )}>
+          <CardContent className="p-3">
+            <p className="text-sm leading-relaxed whitespace-pre-wrap">
+              {message.content}
+            </p>
+            <p className={cn(
+              "text-xs mt-2",
+              isUser ? "text-primary-foreground/70" : "text-muted-foreground"
+            )}>
+              {message.timestamp.toLocaleTimeString([], { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+              })}
+            </p>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

@@ -3,6 +3,9 @@ import { useChat } from './hooks/useChat';
 import { ModelSelector } from './components/ModelSelector';
 import { ChatMessage } from './components/ChatMessage';
 import { ChatInput } from './components/ChatInput';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { MessageCircle, Trash2 } from "lucide-react";
 
 function App() {
   const { messages, selectedModel, setSelectedModel, isLoading, sendMessage, clearChat } = useChat();
@@ -17,55 +20,63 @@ function App() {
   }, [messages]);
 
   return (
-    <div className="h-screen flex flex-col bg-gray-50">
+    <div className="h-screen flex flex-col bg-background">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b px-4 py-3">
-        <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <div>
-            <h1 className="text-xl font-semibold text-gray-900">AI LLM Wrapper</h1>
-            <p className="text-sm text-gray-500">Chat with any LLM model through OpenRouter</p>
-          </div>
-          
-          <div className="flex items-center space-x-4">
-            <div className="w-64">
+      <Card className="rounded-none border-x-0 border-t-0">
+        <CardContent className="p-4">
+          <div className="max-w-4xl mx-auto flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <MessageCircle className="h-6 w-6 text-primary" />
+              <div>
+                <h1 className="text-xl font-semibold">AI LLM Wrapper</h1>
+                <p className="text-sm text-muted-foreground">
+                  Chat with any LLM model through OpenRouter
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex items-center space-x-4">
               <ModelSelector
                 selectedModel={selectedModel}
                 onModelSelect={setSelectedModel}
               />
+              
+              {messages.length > 0 && (
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={clearChat}
+                  className="gap-2"
+                >
+                  <Trash2 className="h-4 w-4" />
+                  Clear Chat
+                </Button>
+              )}
             </div>
-            
-            {messages.length > 0 && (
-              <button
-                onClick={clearChat}
-                className="px-3 py-1 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded transition-colors"
-              >
-                Clear Chat
-              </button>
-            )}
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
 
       {/* Chat Area */}
       <div className="flex-1 flex flex-col max-w-4xl mx-auto w-full">
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto px-4 py-4">
+        <div className="flex-1 overflow-y-auto p-4">
           {messages.length === 0 ? (
             <div className="flex items-center justify-center h-full">
-              <div className="text-center">
-                <div className="w-16 h-16 mx-auto mb-4 bg-gray-200 rounded-full flex items-center justify-center">
-                  <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                  </svg>
-                </div>
-                <h3 className="text-lg font-medium text-gray-900 mb-2">Start a conversation</h3>
-                <p className="text-gray-500 max-w-md">
-                  {selectedModel 
-                    ? `Selected model: ${selectedModel.name}. Type a message to get started!`
-                    : "Select a model from the dropdown above and start chatting."
-                  }
-                </p>
-              </div>
+              <Card className="w-full max-w-md">
+                <CardContent className="p-6 text-center">
+                  <div className="w-16 h-16 mx-auto mb-4 bg-muted rounded-full flex items-center justify-center">
+                    <MessageCircle className="w-8 h-8 text-muted-foreground" />
+                  </div>
+                  <h3 className="text-lg font-medium mb-2">Start a conversation</h3>
+                  <p className="text-muted-foreground">
+                    {selectedModel 
+                      ? `Selected model: ${selectedModel.name}. Type a message to get started!`
+                      : "Select a model from the dropdown above and start chatting."
+                    }
+                  </p>
+                </CardContent>
+              </Card>
             </div>
           ) : (
             <div className="space-y-4">
@@ -74,17 +85,19 @@ function App() {
               ))}
               {isLoading && (
                 <div className="flex justify-start mb-4">
-                  <div className="flex items-start space-x-2 max-w-[80%]">
-                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gray-500 flex items-center justify-center text-white text-sm font-medium">
+                  <div className="flex items-start space-x-3 max-w-[80%]">
+                    <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center text-secondary-foreground text-xs font-medium">
                       AI
                     </div>
-                    <div className="bg-gray-100 border rounded-lg px-4 py-2">
-                      <div className="flex space-x-1">
-                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                      </div>
-                    </div>
+                    <Card>
+                      <CardContent className="p-3">
+                        <div className="flex space-x-1">
+                          <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce"></div>
+                          <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                          <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                        </div>
+                      </CardContent>
+                    </Card>
                   </div>
                 </div>
               )}
@@ -94,11 +107,13 @@ function App() {
         </div>
 
         {/* Input Area */}
-        <ChatInput
-          onSendMessage={sendMessage}
-          isLoading={isLoading}
-          disabled={!selectedModel}
-        />
+        <div className="px-4 pb-4">
+          <ChatInput
+            onSendMessage={sendMessage}
+            isLoading={isLoading}
+            disabled={!selectedModel}
+          />
+        </div>
       </div>
     </div>
   );
