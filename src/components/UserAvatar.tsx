@@ -47,31 +47,32 @@ export function UserAvatar() {
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Avatar className="h-8 w-8 cursor-pointer hover:opacity-80 transition-opacity">
-            <AvatarFallback className={cn(
-              "relative",
-              isValidApiKey ? "bg-green-100 text-green-700" : 
-              hasApiKey ? "bg-yellow-100 text-yellow-700" : 
-              "bg-muted text-muted-foreground"
-            )}>
-              <User className="h-4 w-4" />
-              {/* Status indicator */}
-              <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-background border border-background flex items-center justify-center">
-                {apiKeyData.status === "valid" && (
-                  <div className="w-2 h-2 rounded-full bg-green-500" />
-                )}
-                {apiKeyData.status === "invalid" && (
-                  <div className="w-2 h-2 rounded-full bg-red-500" />
-                )}
-                {apiKeyData.status === "checking" && (
-                  <div className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse" />
-                )}
-                {apiKeyData.status === "not-set" && hasApiKey && (
-                  <div className="w-2 h-2 rounded-full bg-gray-400" />
-                )}
-              </div>
-            </AvatarFallback>
-          </Avatar>
+          <div className="relative">
+            <Avatar className="h-8 w-8 cursor-pointer hover:opacity-80 transition-opacity">
+              <AvatarFallback className={cn(
+                isValidApiKey ? "bg-green-100 text-green-700" : 
+                hasApiKey ? "bg-yellow-100 text-yellow-700" : 
+                "bg-muted text-muted-foreground"
+              )}>
+                <User className="h-4 w-4" />
+              </AvatarFallback>
+            </Avatar>
+            {/* Status indicator - moved outside Avatar for better visibility */}
+            <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-background border border-background flex items-center justify-center z-10">
+              {apiKeyData.status === "valid" && (
+                <div className="w-2 h-2 rounded-full bg-green-500" />
+              )}
+              {apiKeyData.status === "invalid" && (
+                <div className="w-2 h-2 rounded-full bg-red-500" />
+              )}
+              {apiKeyData.status === "checking" && (
+                <div className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse" />
+              )}
+              {apiKeyData.status === "not-set" && hasApiKey && (
+                <div className="w-2 h-2 rounded-full bg-gray-400" />
+              )}
+            </div>
+          </div>
         </DropdownMenuTrigger>
 
         <DropdownMenuContent align="end" className="w-56">
@@ -102,7 +103,11 @@ export function UserAvatar() {
             </div>
             {apiKeyData.lastValidated && (
               <div className="text-xs text-muted-foreground">
-                Last validated: {apiKeyData.lastValidated.toLocaleDateString()}
+                Last validated: {
+                  apiKeyData.lastValidated instanceof Date 
+                    ? apiKeyData.lastValidated.toLocaleDateString()
+                    : new Date(apiKeyData.lastValidated).toLocaleDateString()
+                }
               </div>
             )}
           </div>

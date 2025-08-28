@@ -1,24 +1,39 @@
-import { useState, type KeyboardEvent } from 'react';
+import { useState, useRef, useEffect, type KeyboardEvent } from 'react';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Card } from "@/components/ui/card";
 import { Send, Loader2 } from "lucide-react";
 
 interface ChatInputProps {
-  onSendMessage: (message: string) => void;
+  onSendMessage: (message: string, onSent?: () => void) => void;
   isLoading: boolean;
   disabled?: boolean;
 }
 
 export function ChatInput({ onSendMessage, isLoading, disabled }: ChatInputProps) {
   const [message, setMessage] = useState('');
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleSubmit = () => {
     if (message.trim() && !isLoading && !disabled) {
-      onSendMessage(message);
+      onSendMessage(message, () => {
+        // Focus back to input after sending
+        setTimeout(() => {
+          textareaRef.current?.focus();
+        }, 100);
+      });
       setMessage('');
+      if (textareaRef.current) {
+        textareaRef.current.style.height = 'auto';
+      }
     }
   };
+
+  // Auto-focus when component becomes enabled
+  useEffect(() => {
+    if (!disabled && !isLoading) {
+      textareaRef.current?.focus();
+    }
+  }, [disabled, isLoading]);
 
   const handleKeyDown = (e: KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -27,13 +42,25 @@ export function ChatInput({ onSendMessage, isLoading, disabled }: ChatInputProps
     }
   };
 
+  const adjustTextareaHeight = () => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = 'auto';
+      textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+    }
+  };
+
   return (
-    <Card className="border-t bg-card p-4">
+    <div className="w-full">
       <div className="flex items-end space-x-2">
         <div className="flex-1">
           <Textarea
+            ref={textareaRef}
             value={message}
-            onChange={(e) => setMessage(e.target.value)}
+            onChange={(e) => {
+              setMessage(e.target.value);
+              adjustTextareaHeight();
+            }}
             onKeyDown={handleKeyDown}
             placeholder={disabled ? "Select a model to start chatting..." : "Type your message..."}
             disabled={disabled || isLoading}
@@ -59,6 +86,6 @@ export function ChatInput({ onSendMessage, isLoading, disabled }: ChatInputProps
       <p className="text-xs text-muted-foreground mt-2">
         Press Enter to send, Shift+Enter for new line
       </p>
-    </Card>
+    </div>
   );
 }
